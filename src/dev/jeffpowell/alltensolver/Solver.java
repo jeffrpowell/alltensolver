@@ -24,16 +24,16 @@ public class Solver {
         List<Integer> groupOf4 = Collections.emptyList();
         for (List<Integer> group : inputGroups) {
             if (group.size() == 4) {
-                callback.accept("Searching through " + group);
+                // callback.accept("Searching through " + group);
                 simpleSearchForListOf4(group);
                 groupOf4 = group;
             }
             else {
-                callback.accept("Searching through " + group);
+                // callback.accept("Searching through " + group);
                 fullSearch(group);
             }
         }
-        callback.accept("Searching through " + groupOf4 + " again");
+        // callback.accept("Searching through " + groupOf4 + " again");
         fullSearch(groupOf4);
     };
 

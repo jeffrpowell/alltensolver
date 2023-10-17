@@ -52,7 +52,7 @@ public class Expression {
     }
     
     public List<Expression> iterateFull() {
-        return iterate(EnumSet.allOf(Ops.class));
+        return iterate(EnumSet.complementOf(EnumSet.of(Ops.ROOT)));
     }
 
     private List<Expression> iterate(EnumSet<Ops> ops) {
@@ -60,9 +60,6 @@ public class Expression {
         List<Integer> operandsRemaining = removeFromGroup(0, operandsLeft);
         List<Expression> ret = new ArrayList<>();
         for (Ops op : ops) {
-            if (op == Ops.ROOT) {
-                continue;
-            }
             ret.add(new Expression(this, start, op, next, operandsRemaining));
         }
         return ret;
@@ -90,9 +87,9 @@ public class Expression {
     public StringBuilder buildString(boolean isStart, StringBuilder b) {
         List<Expression> expressionChain = new ArrayList<>();
         expressionChain.addLast(this);
-        Expression e;
+        Expression e = this;
         do {
-            e = priorExpression;
+            e = e.priorExpression;
             expressionChain.addFirst(e);
         } while (e.operation != Ops.ROOT);
 
