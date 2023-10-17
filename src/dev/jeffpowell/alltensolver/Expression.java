@@ -42,6 +42,7 @@ public class Expression {
     public Expression(Expression priorExpression, double start, Ops operation, double nextOperand, List<Integer> operandsLeft) {
         this.priorExpression = priorExpression;
         this.start = operation.eval(start, nextOperand);
+        this.nextOperand = nextOperand;
         this.operation = operation;
         this.operandsLeft = operandsLeft;
     }
@@ -59,6 +60,9 @@ public class Expression {
         List<Integer> operandsRemaining = removeFromGroup(0, operandsLeft);
         List<Expression> ret = new ArrayList<>();
         for (Ops op : ops) {
+            if (op == Ops.ROOT) {
+                continue;
+            }
             ret.add(new Expression(this, start, op, next, operandsRemaining));
         }
         return ret;
@@ -84,9 +88,15 @@ public class Expression {
     // }
 
     public StringBuilder buildString(boolean isStart, StringBuilder b) {
-        List<Expression> expressionChain = Stream.iterate(this, e -> e.operation != Ops.ROOT, e -> e.priorExpression)
-            .collect(Collectors.toList()).reversed();
-        Expression e = expressionChain.removeFirst();
+        List<Expression> expressionChain = new ArrayList<>();
+        expressionChain.addLast(this);
+        Expression e;
+        do {
+            e = priorExpression;
+            expressionChain.addFirst(e);
+        } while (e.operation != Ops.ROOT);
+
+        e = expressionChain.removeFirst();
         b.append(e.start);
         while (!expressionChain.isEmpty()) {
             e = expressionChain.removeFirst();

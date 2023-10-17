@@ -24,13 +24,16 @@ public class Solver {
         List<Integer> groupOf4 = Collections.emptyList();
         for (List<Integer> group : inputGroups) {
             if (group.size() == 4) {
+                callback.accept("Searching through " + group);
                 simpleSearchForListOf4(group);
                 groupOf4 = group;
             }
             else {
+                callback.accept("Searching through " + group);
                 fullSearch(group);
             }
         }
+        callback.accept("Searching through " + groupOf4 + " again");
         fullSearch(groupOf4);
     };
 
@@ -67,8 +70,8 @@ public class Solver {
             if (e.finished()) {
                 double res = e.eval();
                 int resInt = Double.valueOf(res).intValue();
-                if (res > 0.9999 && res < 10.0001 && solved.add(resInt)) {
-                    callback.accept(e.buildString(true, new StringBuilder(resInt).append(" = ")).toString());
+                if (Math.floor(res) == res && res > 0.9999 && res < 10.0001 && solved.add(resInt)) {
+                    callback.accept(e.buildString(true, new StringBuilder().append(resInt).append(" = ")).toString());
                     if (solved.size() == 10) {
                         break;
                     }
