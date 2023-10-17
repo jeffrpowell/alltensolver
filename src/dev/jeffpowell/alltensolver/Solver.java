@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Solver {
    
@@ -38,29 +39,14 @@ public class Solver {
     };
 
     private void simpleSearchForListOf4(List<Integer> group) {
-        Deque<Expression> q = new ArrayDeque<>();
-        for (int i = 0; i < group.size(); i++) {
-            q.push(new Expression(group.get(i).doubleValue(), Expression.removeFromGroup(i, group)));
-        }
-        while(!q.isEmpty()) {
-            Expression e = q.pop();
-            if (e.finished()) {
-                double res = e.eval();
-                int resInt = Double.valueOf(res).intValue();
-                if (Math.floor(res) == res && res > 0.9999 && res < 10.0001 && solved.add(resInt)) {
-                    callback.accept(e.buildString(true, new StringBuilder(resInt).append(" = ")).toString());
-                    if (solved.size() == 10) {
-                        break;
-                    }
-                }
-            }
-            else {
-                e.iterateSimple().forEach(q::push);
-            }
-        }
+        search(group, Expression::iterateSimple);
     }
 
     private void fullSearch(List<Integer> group) {
+        search(group, Expression::iterateFull);
+    }
+
+    private void search(List<Integer> group, Function<Expression, List<Expression>> expressionIterator) {
         Deque<Expression> q = new ArrayDeque<>();
         for (int i = 0; i < group.size(); i++) {
             q.push(new Expression(group.get(i).doubleValue(), Expression.removeFromGroup(i, group)));
@@ -78,7 +64,7 @@ public class Solver {
                 }
             }
             else {
-                e.iterateFull().forEach(q::push);
+                expressionIterator.apply(e).forEach(q::push);
             }
         }
     }

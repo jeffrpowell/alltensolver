@@ -94,10 +94,10 @@ public class Expression {
         } while (e.operation != Ops.ROOT);
 
         e = expressionChain.removeFirst();
-        b.append(e.start);
+        b.append(Double.valueOf(e.start).intValue());
         while (!expressionChain.isEmpty()) {
             e = expressionChain.removeFirst();
-            b.append(" ").append(e.operation.c).append(" ").append(nextOperand);
+            b.append(" ").append(e.operation.c).append(" ").append(Double.valueOf(e.nextOperand).intValue());
         }
         return b;
     }
