@@ -22,23 +22,11 @@ public class Solver {
     }
 
     public void solve() {
-        List<Integer> groupOf4 = Collections.emptyList();
-        for (List<Integer> group : inputGroups) {
-            if (group.size() == 4) {
-                // callback.accept("Searching through " + group);
-                simpleSearchForListOf4(group);
-                groupOf4 = group;
-            }
-            else {
-                // callback.accept("Searching through " + group);
-                fullSearch(group);
-            }
-        }
-        // callback.accept("Searching through " + groupOf4 + " again");
-        fullSearch(groupOf4);
+        inputGroups.forEach(this::simpleSearch);
+        inputGroups.forEach(this::fullSearch);
     };
 
-    private void simpleSearchForListOf4(List<Integer> group) {
+    private void simpleSearch(List<Integer> group) {
         search(group, Expression::iterateSimple);
     }
 

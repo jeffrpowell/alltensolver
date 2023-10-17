@@ -48,21 +48,17 @@ public class Expression {
     }
 
     public List<Expression> iterateSimple() {
-        return iterate(EnumSet.of(Ops.ADD, Ops.SUBTRACT));
-    }
-    
-    public List<Expression> iterateFull() {
-        return iterate(EnumSet.complementOf(EnumSet.of(Ops.ROOT)));
-    }
-
-    private List<Expression> iterate(EnumSet<Ops> ops) {
         double next = operandsLeft.get(0).doubleValue();
         List<Integer> operandsRemaining = removeFromGroup(0, operandsLeft);
         List<Expression> ret = new ArrayList<>();
-        for (Ops op : ops) {
+        for (Ops op : EnumSet.complementOf(EnumSet.of(Ops.ROOT))) {
             ret.add(new Expression(this, start, op, next, operandsRemaining));
         }
         return ret;
+    }
+    
+    public List<Expression> iterateFull() {
+        return new ArrayList<>();
     }
 
     public boolean finished() {
@@ -71,18 +67,7 @@ public class Expression {
 
     public double eval() {
         return start;
-        // return pointerToStart.nextExpression.eval(pointerToStart.start);
     }
-
-    // private double eval(double run) {
-    //     run = operation.eval(run, nextOperand);
-    //     if (finished()) {
-    //         return run;
-    //     }
-    //     else {
-    //         return nextExpression.eval(run);
-    //     }
-    // }
 
     public StringBuilder buildString(boolean isStart, StringBuilder b) {
         List<Expression> expressionChain = new ArrayList<>();
