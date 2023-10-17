@@ -48,11 +48,13 @@ public class Expression {
     }
 
     public List<Expression> iterateSimple() {
-        double next = operandsLeft.get(0).doubleValue();
-        List<Integer> operandsRemaining = removeFromGroup(0, operandsLeft);
         List<Expression> ret = new ArrayList<>();
-        for (Ops op : EnumSet.complementOf(EnumSet.of(Ops.ROOT))) {
-            ret.add(new Expression(this, start, op, next, operandsRemaining));
+        for (int i = 0; i < operandsLeft.size(); i++) {
+            double next = operandsLeft.get(i).doubleValue();
+            List<Integer> operandsRemaining = removeFromGroup(i, operandsLeft);
+            for (Ops op : EnumSet.complementOf(EnumSet.of(Ops.ROOT))) {
+                ret.add(new Expression(this, start, op, next, operandsRemaining));
+            }
         }
         return ret;
     }

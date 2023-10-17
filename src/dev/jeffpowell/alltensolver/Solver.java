@@ -1,7 +1,6 @@
 package dev.jeffpowell.alltensolver;
 
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
