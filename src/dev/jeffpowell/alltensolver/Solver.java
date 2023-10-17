@@ -44,7 +44,7 @@ public class Solver {
                 double res = e.eval();
                 int resInt = Double.valueOf(res).intValue();
                 if (Math.floor(res) == res && res > 0.9999 && res < 10.0001 && solved.add(resInt)) {
-                    callback.accept(e.buildString(true, new StringBuilder().append(resInt).append(" = ")).toString());
+                    callback.accept(e.buildString(true, new StringBuilder()).insert(0, " = ").insert(0, resInt).toString());
                     if (solved.size() == 10) {
                         break;
                     }

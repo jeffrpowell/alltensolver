@@ -6,15 +6,16 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Expression {
     public static enum Ops {
         ROOT(' ', (l,r) -> l),
-        ADD('+', (l,r) -> l + r),
-        SUBTRACT('-', (l,r) -> l - r),
+        REV_DIVIDE('\\', (l,r) -> r / l),
+        DIVIDE('/', (l,r) -> l / r),
         MULTIPLY('*', (l,r) -> l * r),
-        DIVIDE('/', (l,r) -> l / r);
+        REV_SUBTRACT('~', (l,r) -> r - l),
+        SUBTRACT('-', (l,r) -> l - r),
+        ADD('+', (l,r) -> l + r);
         final char c;
         final BiFunction<Double, Double, Double> fn;
         private Ops(char c, BiFunction<Double, Double, Double> fn) {
@@ -84,7 +85,11 @@ public class Expression {
         b.append(Double.valueOf(e.start).intValue());
         while (!expressionChain.isEmpty()) {
             e = expressionChain.removeFirst();
-            b.append(" ").append(e.operation.c).append(" ").append(Double.valueOf(e.nextOperand).intValue());
+            switch (e.operation) {
+                case REV_SUBTRACT -> b.insert(0, " - ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                case REV_DIVIDE -> b.insert(0, " / ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                default -> b.append(" ").append(e.operation.c).append(" ").append(Double.valueOf(e.nextOperand).intValue());
+            }
         }
         return b;
     }
