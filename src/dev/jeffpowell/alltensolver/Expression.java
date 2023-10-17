@@ -9,22 +9,30 @@ import java.util.stream.IntStream;
 
 public class Expression {
     public static enum Ops {
-        ROOT(' ', (l,r) -> l),
-        REV_DIVIDE('\\', (l,r) -> r / l),
-        DIVIDE('/', (l,r) -> l / r),
-        MULTIPLY('*', (l,r) -> l * r),
-        REV_SUBTRACT('~', (l,r) -> r - l),
-        SUBTRACT('-', (l,r) -> l - r),
-        ADD('+', (l,r) -> l + r);
+        ROOT(' ', (l,r) -> l, false),
+        REV_DIVIDE('\\', (l,r) -> r / l, false),
+        REV_MULTIPLY('x', (l,r) -> r * l, false),
+        DIVIDE('/', (l,r) -> l / r, false),
+        MULTIPLY('*', (l,r) -> l * r, false),
+        REV_SUBTRACT('~', (l,r) -> r - l, true),
+        REV_ADD('t', (l,r) -> r + l, true),
+        SUBTRACT('-', (l,r) -> l - r, true),
+        ADD('+', (l,r) -> l + r, true);
         final char c;
         final BiFunction<Double, Double, Double> fn;
-        private Ops(char c, BiFunction<Double, Double, Double> fn) {
+        final boolean isAddSubtract;
+        private Ops(char c, BiFunction<Double, Double, Double> fn, boolean isAddSubtract) {
             this.c = c;
             this.fn = fn;
+            this.isAddSubtract = isAddSubtract;
         }
 
         public double eval(double l, double r) {
             return fn.apply(l, r);
+        }
+
+        public boolean requiresParens(Ops nextOperator) {
+            return isAddSubtract != nextOperator.isAddSubtract;
         }
     }
     private final Ops operation;
@@ -83,13 +91,20 @@ public class Expression {
 
         e = expressionChain.removeFirst();
         b.append(Double.valueOf(e.start).intValue());
+        Ops lastOperator = null;
         while (!expressionChain.isEmpty()) {
             e = expressionChain.removeFirst();
+            if (lastOperator != null && lastOperator.requiresParens(e.operation)){
+                b.insert(0, "(").append(")");
+            }
             switch (e.operation) {
                 case REV_SUBTRACT -> b.insert(0, " - ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                case REV_ADD -> b.insert(0, " + ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                case REV_MULTIPLY -> b.insert(0, " * ").insert(0, Double.valueOf(e.nextOperand).intValue());
                 case REV_DIVIDE -> b.insert(0, " / ").insert(0, Double.valueOf(e.nextOperand).intValue());
                 default -> b.append(" ").append(e.operation.c).append(" ").append(Double.valueOf(e.nextOperand).intValue());
             }
+            lastOperator = e.operation;
         }
         return b;
     }
