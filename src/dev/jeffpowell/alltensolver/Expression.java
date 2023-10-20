@@ -80,7 +80,7 @@ public class Expression {
         return start;
     }
 
-    public StringBuilder buildString(boolean isStart, StringBuilder b) {
+    public StringBuilder buildString(StringBuilder b) {
         List<Expression> expressionChain = new ArrayList<>();
         expressionChain.addLast(this);
         Expression e = this;
@@ -98,10 +98,10 @@ public class Expression {
                 b.insert(0, "(").append(")");
             }
             switch (e.operation) {
-                case REV_SUBTRACT -> b.insert(0, " - ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                case REV_SUBTRACT -> b.insert(0, " - (").insert(0, Double.valueOf(e.nextOperand).intValue()).append(")");
                 case REV_ADD -> b.insert(0, " + ").insert(0, Double.valueOf(e.nextOperand).intValue());
                 case REV_MULTIPLY -> b.insert(0, " * ").insert(0, Double.valueOf(e.nextOperand).intValue());
-                case REV_DIVIDE -> b.insert(0, " / ").insert(0, Double.valueOf(e.nextOperand).intValue());
+                case REV_DIVIDE -> b.insert(0, " / (").insert(0, Double.valueOf(e.nextOperand).intValue()).append(")");
                 default -> b.append(" ").append(e.operation.c).append(" ").append(Double.valueOf(e.nextOperand).intValue());
             }
             lastOperator = e.operation;
