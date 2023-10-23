@@ -56,7 +56,8 @@ public class Expression {
         this.operandsLeft = operandsLeft;
     }
 
-    public List<Expression> iterateSimple() {
+    //searches by applying all valid operations between a running value and each new operand one-by-one
+    public List<Expression> iterate() {
         List<Expression> ret = new ArrayList<>();
         for (int i = 0; i < operandsLeft.size(); i++) {
             double next = operandsLeft.get(i).doubleValue();
@@ -66,10 +67,6 @@ public class Expression {
             }
         }
         return ret;
-    }
-    
-    public List<Expression> iterateFull() {
-        return new ArrayList<>();
     }
 
     public boolean finished() {

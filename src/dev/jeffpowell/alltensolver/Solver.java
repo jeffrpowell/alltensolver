@@ -22,15 +22,16 @@ public class Solver {
 
     public void solve() {
         inputGroups.forEach(this::simpleSearch);
-        inputGroups.forEach(this::fullSearch);
+        inputGroups.stream()
+            .filter(g -> g.size() == 4).forEach(this::fullSearch);
     };
 
     private void simpleSearch(List<Integer> group) {
-        search(group, Expression::iterateSimple);
+        search(group, Expression::iterate);
     }
-
+    
     private void fullSearch(List<Integer> group) {
-        search(group, Expression::iterateFull);
+        searchComplex(group);
     }
 
     private void search(List<Integer> group, Function<Expression, List<Expression>> expressionIterator) {
@@ -52,6 +53,22 @@ public class Solver {
             }
             else {
                 expressionIterator.apply(e).forEach(q::push);
+            }
+        }
+    }
+
+    private void searchComplex(List<Integer> group) {
+        Deque<ComplexExpression> q = new ArrayDeque<>();
+        ComplexExpression.generate(group).forEach(q::push);
+        while(!q.isEmpty()) {
+            ComplexExpression e = q.pop();
+            double res = e.eval();
+            int resInt = Double.valueOf(res).intValue();
+            if (Math.floor(res) == res && res > 0.9999 && res < 10.0001 && solved.add(resInt)) {
+                callback.accept(e.buildString(new StringBuilder()).insert(0, " = ").insert(0, resInt).toString());
+                if (solved.size() == 10) {
+                    break;
+                }
             }
         }
     }
